@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Linux Reinstall - 纯前端 VPS Linux 系统重装命令生成器。密码与配置仅在浏览器本地处理。">
+  <meta name="theme-color" content="#0b0f14">
+  <title>Linux Reinstall - VPS 重装命令生成器</title>
+  <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./" aria-label="Linux Reinstall 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6.5 5.5h11a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2Z"/><path d="m8.5 10 2 2-2 2M12.5 14h3"/></svg>
+        </span>
+        <span>
+          <strong>Linux Reinstall</strong>
+          <small>VPS Reinstall Generator</small>
+        </span>
+      </a>
+
+      <div class="header-actions">
+        <a class="icon-button" href="https://github.com/kkx999/Linux-Reinstall" target="_blank" rel="noreferrer" aria-label="打开 GitHub 仓库" title="GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.59 2 12.253c0 4.53 2.865 8.373 6.839 9.73.5.096.682-.222.682-.493 0-.244-.009-.89-.014-1.746-2.782.619-3.369-1.374-3.369-1.374-.455-1.185-1.11-1.5-1.11-1.5-.908-.636.069-.623.069-.623 1.004.072 1.532 1.057 1.532 1.057.892 1.566 2.341 1.114 2.91.852.091-.663.35-1.115.636-1.371-2.221-.259-4.555-1.14-4.555-5.073 0-1.12.389-2.036 1.029-2.754-.103-.26-.446-1.304.098-2.717 0 0 .84-.276 2.75 1.052A9.33 9.33 0 0 1 12 7.967a9.32 9.32 0 0 1 2.504.345c1.909-1.328 2.747-1.052 2.747-1.052.546 1.413.203 2.457.1 2.717.64.718 1.028 1.634 1.028 2.754 0 3.943-2.337 4.811-4.566 5.065.359.317.679.943.679 1.901 0 1.373-.012 2.48-.012 2.817 0 .273.18.594.688.493C19.138 20.622 22 16.78 22 12.253 22 6.59 17.523 2 12 2Z"/></svg>
+        </a>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="切换主题" title="切换主题">
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="eyebrow"><span></span> 纯前端 · 本地生成</div>
+      <h1>Linux 重装命令，<br><em>选好就能复制。</em></h1>
+      <p>选择发行版与版本，设置 Root 密码和 SSH 端口，即时生成可复制的 VPS 重装命令。本站不连接 VPS，也不会上传或保存你的密码。</p>
+      <div class="trust-row" aria-label="隐私特性">
+        <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> 浏览器本地生成</span>
+        <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg> 密码不上传</span>
+        <span><svg viewBox="0 0 24 24"><path d="M4 17 10 11l4 4 6-6"/><path d="M14 9h6v6"/></svg> 实时命令预览</span>
+      </div>
+    </section>
+
+    <section class="tool-grid" aria-label="重装命令生成器">
+      <div class="panel config-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="step-chip">01</span>
+            <h2>重装配置</h2>
+          </div>
+          <span class="local-badge"><span class="pulse-dot"></span> LOCAL ONLY</span>
+        </div>
+
+        <div class="form-stack">
+          <div class="field-group">
+            <label for="distroButton">系统</label>
+            <div class="custom-select" id="distroSelect">
+              <button class="select-trigger" id="distroButton" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span class="selected-system">
+                  <span class="system-avatar" id="distroAvatar">D</span>
+                  <span>
+                    <strong id="distroLabel">Debian</strong>
+                    <small id="distroMeta">稳定、轻量、常用</small>
+                  </span>
+                </span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+              </button>
+              <div class="select-menu" id="distroMenu" role="listbox" tabindex="-1">
+                <div class="search-box">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <input id="distroSearch" type="search" placeholder="搜索发行版" autocomplete="off" aria-label="搜索发行版">
+                </div>
+                <div class="option-list" id="distroOptions"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="versionSelect">版本</label>
+            <div class="select-native-wrap">
+              <select id="versionSelect" aria-describedby="versionHint"></select>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+            </div>
+            <p class="field-hint" id="versionHint"></p>
+          </div>
+
+          <div class="field-group conditional-field hidden" id="imageUrlGroup">
+            <label for="imageUrl">RHEL QCOW2 镜像地址</label>
+            <input class="text-input" id="imageUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://access.cdn.redhat.com/...qcow2">
+            <p class="field-hint">RHEL 版本由你提供的官方 QCOW2 镜像决定。</p>
+          </div>
+
+          <div class="field-group">
+            <div class="label-row">
+              <label>Root 密码</label>
+              <span class="privacy-text">不保存</span>
+            </div>
+            <div class="segmented" role="group" aria-label="密码模式">
+              <button type="button" class="segment active" data-password-mode="random">随机生成</button>
+              <button type="button" class="segment" data-password-mode="custom">自定义</button>
+            </div>
+
+            <div class="password-row">
+              <div class="password-input-wrap">
+                <input id="passwordInput" type="password" autocomplete="new-password" spellcheck="false" aria-label="Root 密码">
+                <button class="inside-icon-button" id="visibilityToggle" type="button" aria-label="显示密码" title="显示/隐藏密码">
+                  <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.88 4.24A10.7 10.7 0 0 1 12 4c6.5 0 10 8 10 8a18.7 18.7 0 0 1-2.09 3.11M6.61 6.61C3.65 8.6 2 12 2 12s3.5 8 10 8a9.6 9.6 0 0 0 4.1-.9"/></svg>
+                </button>
+              </div>
+              <button class="compact-button" id="copyPassword" type="button" title="复制密码">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span>复制</span>
+              </button>
+            </div>
+
+            <div class="password-tools" id="randomTools">
+              <button class="text-button" id="regeneratePassword" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8.1 8.1 0 1 0 2 5.3"/><path d="M20 4v7h-7"/></svg>
+                重新生成
+              </button>
+              <label class="length-control" for="passwordLength">
+                长度
+                <select id="passwordLength">
+                  <option value="16">16</option>
+                  <option value="20" selected>20</option>
+                  <option value="24">24</option>
+                  <option value="32">32</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="strength-row">
+              <div class="strength-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <span id="strengthText">强</span>
+            </div>
+            <p class="field-error" id="passwordError"></p>
+            <p class="field-hint special-password-note hidden" id="specialPasswordNote">fnOS / FygoOS 中这里的账号密码仅用于安装期间查看 SSH 日志，安装完成后需在系统管理面板中创建正式用户。</p>
+          </div>
+
+          <div class="field-row two-col">
+            <div class="field-group">
+              <label for="sshPort">SSH 端口</label>
+              <input class="text-input" id="sshPort" type="number" min="1" max="65535" inputmode="numeric" value="22" autocomplete="off">
+              <p class="field-error" id="portError"></p>
+            </div>
+            <div class="field-group">
+              <label>服务器网络</label>
+              <div class="segmented region-segmented" role="group" aria-label="服务器网络区域">
+                <button type="button" class="segment active" data-region="overseas">海外</button>
+                <button type="button" class="segment" data-region="china">中国大陆</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel output-panel">
+        <div class="panel-heading output-heading">
+          <div>
+            <span class="step-chip">02</span>
+            <h2>命令预览</h2>
+          </div>
+          <span class="ready-badge" id="readyBadge"><span></span> READY</span>
+        </div>
+
+        <div class="summary-grid">
+          <div><span>系统</span><strong id="summarySystem">Debian 13</strong></div>
+          <div><span>用户</span><strong>root</strong></div>
+          <div><span>SSH</span><strong id="summaryPort">22</strong></div>
+          <div><span>网络</span><strong id="summaryRegion">海外</strong></div>
+        </div>
+
+        <div class="terminal-card">
+          <div class="terminal-topbar">
+            <div class="terminal-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <span>generated-command.sh</span>
+            <button class="terminal-copy" id="terminalCopy" type="button" aria-label="复制完整命令">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>复制</span>
+            </button>
+          </div>
+          <pre id="commandPreview" aria-live="polite"></pre>
+        </div>
+
+        <button class="primary-button" id="copyCommand" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span>复制完整重装命令</span>
+        </button>
+
+        <div class="cancel-box">
+          <div>
+            <strong>误执行了？</strong>
+            <span>服务器重启前可运行 <code>bash reinstall.sh reset</code> 取消。</span>
+          </div>
+          <button class="ghost-button" id="copyReset" type="button">复制取消命令</button>
+        </div>
+
+        <div class="warning-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 2.9 1.8 17a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 2.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <div><strong>重装会清空整块系统磁盘</strong><span>执行前请确认重要数据已经备份，并确认 VPS 虚拟化环境受上游脚本支持。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-strip">
+      <div>
+        <span class="info-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></span>
+        <div><strong>隐私优先</strong><span>密码只存在当前浏览器内存中，刷新页面即重新生成，不写入 LocalStorage。</span></div>
+      </div>
+      <div>
+        <span class="info-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m8 9 2 2-2 2M12 13h4"/></svg></span>
+        <div><strong>上游引擎</strong><span>命令基于 <a href="https://github.com/bin456789/reinstall" target="_blank" rel="noreferrer">bin456789/reinstall</a> 生成，本工具并非其官方项目。</span></div>
+      </div>
+      <div>
+        <span class="info-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg></span>
+        <div><strong>轻量部署</strong><span>无后端、无数据库、无账号系统，适合直接托管在 GitHub Pages。</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <span>Linux Reinstall</span>
+      <span class="footer-dot">•</span>
+      <span>所有命令均在浏览器本地生成</span>
+    </div>
+    <div>
+      <a href="https://github.com/kkx999/Linux-Reinstall" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="https://github.com/bin456789/reinstall" target="_blank" rel="noreferrer">Upstream</a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+    <span id="toastText">已复制</span>
+  </div>
+
+  <script src="./assets/app.js"></script>
+</body>
+</html>
