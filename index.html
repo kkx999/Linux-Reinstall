@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#0b0f14">
   <title>Linux Reinstall - VPS 重装命令生成器</title>
   <link rel="stylesheet" href="./assets/style.css">
+  <link rel="stylesheet" href="./assets/refine.css">
 </head>
 <body>
   <div class="ambient ambient-a" aria-hidden="true"></div>
@@ -41,6 +42,12 @@
       <div class="eyebrow"><span></span> 纯前端 · 本地生成</div>
       <h1>Linux 重装命令，<br><em>选好就能复制。</em></h1>
       <p>选择发行版与版本，设置 Root 密码和 SSH 端口，即时生成可复制的 VPS 重装命令。本站不连接 VPS，也不会上传或保存你的密码。</p>
+      <div class="hero-actions">
+        <a class="hero-cta" href="#generator">
+          <span>立即使用</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </a>
+      </div>
       <div class="trust-row" aria-label="隐私特性">
         <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> 浏览器本地生成</span>
         <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg> 密码不上传</span>
@@ -48,14 +55,14 @@
       </div>
     </section>
 
-    <section class="tool-grid" aria-label="重装命令生成器">
+    <section class="tool-grid" id="generator" aria-label="重装命令生成器">
       <div class="panel config-panel">
         <div class="panel-heading">
           <div>
             <span class="step-chip">01</span>
             <h2>重装配置</h2>
           </div>
-          <span class="local-badge"><span class="pulse-dot"></span> LOCAL ONLY</span>
+          <span class="local-badge"><span class="pulse-dot"></span> 仅本地处理</span>
         </div>
 
         <div class="form-stack">
@@ -168,7 +175,7 @@
             <span class="step-chip">02</span>
             <h2>命令预览</h2>
           </div>
-          <span class="ready-badge" id="readyBadge"><span></span> READY</span>
+          <span class="ready-badge" id="readyBadge"><span></span> 命令就绪</span>
         </div>
 
         <div class="summary-grid">
@@ -205,7 +212,7 @@
 
         <div class="warning-box">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 2.9 1.8 17a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 2.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
-          <div><strong>重装会清空整块系统磁盘</strong><span>执行前请确认重要数据已经备份，并确认 VPS 虚拟化环境受上游脚本支持。</span></div>
+          <div><strong>重装将清空目标服务器系统磁盘</strong><span>执行前请先完成重要数据备份，并确认 VPS 虚拟化环境受上游脚本支持。</span></div>
         </div>
       </div>
     </section>
@@ -244,5 +251,6 @@
   </div>
 
   <script src="./assets/app.js"></script>
+  <script src="./assets/refine.js"></script>
 </body>
 </html>
