@@ -30,6 +30,29 @@
     { id: 'redhat', name: 'Red Hat Enterprise Linux', avatar: 'RH', meta: '需提供官方 QCOW2 镜像', versions: [{ value: 'image', label: '8 / 9 / 10（由镜像决定）' }], requiresImage: true }
   ];
 
+  const REQUIREMENTS = {
+    alpine: { ram: '256 MB', disk: '1 GB', note: '上游项目给出的最低安装要求。' },
+    debian: { ram: '256 MB', disk: '1–1.5 GB', note: '256 MB 内存时建议至少 1.5 GB 磁盘；512 MB 内存时 1 GB 可用。' },
+    kali: { ram: '256 MB', disk: '1–1.5 GB', note: '低内存机器建议预留更充足的磁盘空间。' },
+    ubuntu: { ram: '512 MB', disk: '2 GB', note: '使用云镜像安装，建议实际配置高于最低值。' },
+    anolis: { ram: '512 MB', disk: '5 GB', note: '使用云镜像安装。' },
+    rocky: { ram: '512 MB', disk: '5 GB', note: 'RHEL 兼容发行版最低安装要求。' },
+    almalinux: { ram: '512 MB', disk: '5 GB', note: 'RHEL 兼容发行版最低安装要求。' },
+    oracle: { ram: '512 MB', disk: '5 GB', note: 'RHEL 兼容发行版最低安装要求。' },
+    redhat: { ram: '512 MB', disk: '5 GB', note: '实际占用还取决于你提供的 QCOW2 镜像。' },
+    opencloudos: { ram: '512 MB', disk: '5 GB', note: '使用云镜像安装。' },
+    centos: { ram: '512 MB', disk: '5 GB', note: '使用云镜像安装。' },
+    fedora: { ram: '512 MB', disk: '5 GB', note: '使用云镜像安装。' },
+    openeuler: { ram: '512 MB', disk: '5 GB', note: '使用云镜像安装。' },
+    opensuse: { ram: '512 MB', disk: '5 GB', note: '适用于 Leap 与 Tumbleweed。' },
+    nixos: { ram: '512 MB', disk: '5 GB', note: '上游项目给出的最低安装要求。' },
+    arch: { ram: '512 MB', disk: '5 GB', note: '滚动发行版，建议保留额外升级空间。' },
+    gentoo: { ram: '512 MB', disk: '5 GB', note: '上游项目给出的最低安装要求。' },
+    aosc: { ram: '512 MB', disk: '5 GB', note: '上游项目给出的最低安装要求。' },
+    fnos: { ram: '512 MB', disk: '10 GB', note: 'NAS 系统，实际使用建议预留更多存储空间。' },
+    fygoos: { ram: '512 MB', disk: '10 GB', note: 'NAS 系统，实际使用建议预留更多存储空间。' }
+  };
+
   const DOWNLOAD_URLS = {
     overseas: 'https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh',
     china: 'https://cnb.cool/bin456789/reinstall/-/git/raw/main/reinstall.sh'
@@ -54,8 +77,47 @@
     themeToggle: $('themeToggle'), toast: $('toast'), toastText: $('toastText')
   };
 
+  let requirementsCard = null;
+
   function currentSystem() { return SYSTEMS.find(s => s.id === state.distro) || SYSTEMS[0]; }
   function currentVersion() { return currentSystem().versions.find(v => v.value === state.version) || currentSystem().versions[0]; }
+
+  function ensureRequirementsCard() {
+    if (requirementsCard) return requirementsCard;
+    const panel = document.querySelector('.config-panel');
+    if (!panel) return null;
+
+    const card = document.createElement('div');
+    card.className = 'requirements-card';
+    card.innerHTML = `
+      <div class="requirements-head">
+        <span>最低配置</span>
+        <strong data-req-system>—</strong>
+      </div>
+      <div class="requirements-grid">
+        <div><span>最低内存</span><strong data-req-ram>—</strong></div>
+        <div><span>最低磁盘</span><strong data-req-disk>—</strong></div>
+      </div>
+      <p data-req-note></p>
+    `;
+    panel.appendChild(card);
+    requirementsCard = card;
+    return card;
+  }
+
+  function renderRequirements() {
+    const card = ensureRequirementsCard();
+    if (!card) return;
+    const system = currentSystem();
+    const version = currentVersion();
+    const req = REQUIREMENTS[system.id] || { ram: '—', disk: '—', note: '暂无最低配置数据，请以目标系统官方要求为准。' };
+    const versionText = system.requiresImage ? '8 / 9 / 10' : (system.rolling ? 'Rolling' : version.label);
+
+    card.querySelector('[data-req-system]').textContent = `${system.name} ${versionText}`;
+    card.querySelector('[data-req-ram]').textContent = req.ram;
+    card.querySelector('[data-req-disk]').textContent = req.disk;
+    card.querySelector('[data-req-note]').textContent = req.note;
+  }
 
   function restorePreferences() {
     try {
@@ -179,7 +241,9 @@
     args.push(`--password ${shellQuote(displayPassword)}`);
     args.push(`--ssh-port ${els.sshPort.value.trim()}`);
 
-    return `(curl -O ${downloadUrl} || wget -O reinstall.sh ${downloadUrl}) && \\\n  bash reinstall.sh ${args.join(' \\\n    ')}`;
+    return `(curl -O ${downloadUrl} || wget -O reinstall.sh ${downloadUrl}) && \\
+  bash reinstall.sh ${args.join(' \\
+    ')}`;
   }
 
   function renderDistroOptions(filter = '') {
@@ -287,7 +351,8 @@
     els.copyCommand.disabled = !valid;
     els.terminalCopy.disabled = !valid;
     els.readyBadge.classList.toggle('invalid', !valid);
-    els.readyBadge.innerHTML = `<span></span> ${valid ? 'READY' : 'CHECK'}`;
+    els.readyBadge.innerHTML = `<span></span> ${valid ? '命令就绪' : '请检查配置'}`;
+    renderRequirements();
     renderStrength();
   }
 
