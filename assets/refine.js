@@ -122,6 +122,26 @@
     return true;
   }
 
+  function bootstrapLines() {
+    return [
+      'if command -v apt-get >/dev/null 2>&1; then',
+      '  apt-get update && apt-get install -y curl wget ca-certificates',
+      'elif command -v dnf >/dev/null 2>&1; then',
+      '  dnf install -y curl wget ca-certificates',
+      'elif command -v yum >/dev/null 2>&1; then',
+      '  yum install -y curl wget ca-certificates',
+      'elif command -v apk >/dev/null 2>&1; then',
+      '  apk add --no-cache curl wget ca-certificates',
+      'elif command -v pacman >/dev/null 2>&1; then',
+      '  pacman -Sy --noconfirm curl wget ca-certificates',
+      'elif command -v zypper >/dev/null 2>&1; then',
+      '  zypper --non-interactive install curl wget ca-certificates',
+      'else',
+      '  echo "无法识别当前 VPS 的包管理器，请先安装 curl 或 wget。" >&2; exit 1',
+      'fi'
+    ];
+  }
+
   function buildCommand(maskPassword) {
     if (!validate()) return '';
     const args = buildTargetArgs(maskPassword);
@@ -130,8 +150,9 @@
     const slash = '\\';
     const url = SH_URLS[region()];
     const lines = [
-      `apt-get update && apt-get install -y curl wget ca-certificates && ${slash}`,
-      `  (curl -fL -o reinstall.sh ${url} || wget -O reinstall.sh ${url}) && ${slash}`
+      ...bootstrapLines(),
+      '',
+      `(curl -fL -o reinstall.sh ${url} || wget -O reinstall.sh ${url}) && ${slash}`
     ];
 
     const target = args.shift();
