@@ -85,7 +85,7 @@
 .cancel-box strong { color: var(--text); }
 .cancel-box > div > span { color: var(--muted); }
 
-/* Separate the secondary information cards from the generator and align their icons/text. */
+/* Separate the secondary information cards from the generator. */
 .info-strip {
   gap: 18px;
   margin-top: 30px;
@@ -100,20 +100,34 @@
   min-width: 0;
   padding-top: 1px;
 }
-.info-icon {
+
+/*
+ * style.css has a broad `.info-strip span` rule that also matches the icon wrapper.
+ * Use higher specificity here so the icon wrapper remains an actual centered square.
+ */
+.info-strip .info-icon {
   width: 34px;
   height: 34px;
-  margin-top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-width: 34px;
+  flex: 0 0 34px;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  align-self: flex-start;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0;
+  line-height: 1;
 }
-.info-icon svg {
+.info-strip .info-icon svg {
   width: 16px;
   height: 16px;
   display: block;
   margin: 0;
-  flex: 0 0 auto;
+  flex: none;
+  transform: none;
 }
 .info-strip strong {
   line-height: 1.35;
