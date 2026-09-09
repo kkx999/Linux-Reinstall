@@ -54,6 +54,36 @@
 }
 .config-panel .form-stack { flex: 0 0 auto; }
 
+/* Keep the password utility row on one clean visual baseline. */
+.password-tools {
+  min-height: 32px;
+  margin-top: 11px;
+  align-items: center;
+}
+.password-tools .text-button,
+.password-tools .length-control {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+.password-tools .text-button {
+  padding: 0 2px;
+}
+.password-tools .text-button svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+}
+.password-tools .length-control {
+  gap: 8px;
+}
+.password-tools .length-control select {
+  height: 32px;
+  min-width: 52px;
+  padding: 0 8px;
+}
+
 /* Old pseudo-element reminder is retired in favor of a real dynamic requirements card. */
 .config-panel::after {
   content: none;
@@ -61,7 +91,7 @@
 }
 
 .requirements-card {
-  margin-top: auto;
+  margin-top: 26px;
   padding: 14px 15px;
   border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
   border-radius: 14px;
@@ -188,7 +218,7 @@
     gap: 20px;
   }
   .tool-grid > .panel { height: auto; }
-  .requirements-card { margin-top: 22px; }
+  .requirements-card { margin-top: 24px; }
   .info-strip {
     gap: 14px;
     margin-top: 22px;
@@ -198,7 +228,19 @@
 @media (max-width: 620px) {
   .hero-actions { margin-top: 20px; }
   .hero-cta { width: 100%; min-height: 50px; }
+  .password-tools {
+    min-height: 30px;
+    margin-top: 10px;
+  }
+  .password-tools .text-button,
+  .password-tools .length-control {
+    min-height: 30px;
+  }
+  .password-tools .length-control select {
+    height: 30px;
+  }
   .requirements-card {
+    margin-top: 22px;
     padding: 13px 14px;
   }
   .requirements-grid strong { font-size: 12px; }
