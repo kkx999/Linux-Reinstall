@@ -84,6 +84,30 @@
   padding: 0 8px;
 }
 
+/* Windows-specific controls reuse the main form language and only add spacing. */
+.windows-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.windows-options.hidden { display: none; }
+.windows-row { margin: 0; }
+.windows-iso-group { min-width: 0; }
+.windows-iso-segmented {
+  margin-bottom: 0;
+}
+.windows-custom-iso {
+  margin-top: 10px;
+}
+.windows-custom-iso.hidden,
+.windows-auto-hint.hidden { display: none; }
+.windows-auto-hint {
+  margin-top: 8px;
+}
+.windows-iso-group .field-hint {
+  line-height: 1.6;
+}
+
 /* Old pseudo-element reminder is retired in favor of a real dynamic requirements card. */
 .config-panel::after {
   content: none;
@@ -238,6 +262,13 @@
   }
   .password-tools .length-control select {
     height: 30px;
+  }
+  .windows-options {
+    gap: 16px;
+  }
+  .windows-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
   .requirements-card {
     margin-top: 22px;
