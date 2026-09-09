@@ -8,6 +8,29 @@
     { id: 'ubuntu', name: 'Ubuntu', avatar: 'U', meta: '主流云服务器发行版', versions: [
       { value: '26.04', label: '26.04 LTS', tag: '新 LTS' }, { value: '24.04', label: '24.04 LTS', tag: '推荐' }, { value: '22.04', label: '22.04 LTS', tag: '稳定' }, { value: '20.04', label: '20.04 LTS' }, { value: '18.04', label: '18.04 LTS', tag: '旧版' }
     ]},
+    { id: 'windows', name: 'Windows', avatar: 'W', meta: '桌面版 · 官方原版 ISO', windows: true, versions: [
+      { value: 'win11-ltsc-2024', label: 'Windows 11 Enterprise LTSC 2024', imageName: 'Windows 11 Enterprise LTSC 2024', ram: '1 GB', disk: '25 GB', tag: '推荐', note: '上游会自动绕过 Windows 11 硬件限制，并按需注入云厂商驱动。' },
+      { value: 'win11-pro', label: 'Windows 11 Pro', imageName: 'Windows 11 Pro', ram: '1 GB', disk: '25 GB' },
+      { value: 'win11-enterprise', label: 'Windows 11 Enterprise', imageName: 'Windows 11 Enterprise', ram: '1 GB', disk: '25 GB' },
+      { value: 'win11-home', label: 'Windows 11 Home', imageName: 'Windows 11 Home', ram: '1 GB', disk: '25 GB' },
+      { value: 'win10-ltsc-2021', label: 'Windows 10 Enterprise LTSC 2021', imageName: 'Windows 10 Enterprise LTSC 2021', ram: '1 GB', disk: '25 GB', tag: 'LTSC' },
+      { value: 'win10-pro', label: 'Windows 10 Pro', imageName: 'Windows 10 Pro', ram: '1 GB', disk: '25 GB' },
+      { value: 'win10-enterprise', label: 'Windows 10 Enterprise', imageName: 'Windows 10 Enterprise', ram: '1 GB', disk: '25 GB' },
+      { value: 'win81-pro', label: 'Windows 8.1 Pro', imageName: 'Windows 8.1 Pro', ram: '512 MB', disk: '25 GB', tag: '旧版', note: '旧版 Windows 可能存在驱动兼容性限制，安装前建议确认平台支持。' },
+      { value: 'win7-pro', label: 'Windows 7 Professional', imageName: 'Windows 7 Professional', ram: '512 MB', disk: '25 GB', tag: '旧版', note: 'Windows 7 在部分 EFI / 新硬件平台可能缺少驱动；Hyper-V / Azure 需使用第 1 代虚拟机。' }
+    ]},
+    { id: 'windows-server', name: 'Windows Server', avatar: 'WS', meta: '服务器版 · 官方原版 ISO', windows: true, versions: [
+      { value: 'ws2025-standard', label: 'Windows Server 2025 Standard', imageName: 'Windows Server 2025 ServerStandard', ram: '1 GB', disk: '25 GB', tag: '推荐' },
+      { value: 'ws2025-datacenter', label: 'Windows Server 2025 Datacenter', imageName: 'Windows Server 2025 ServerDatacenter', ram: '1 GB', disk: '25 GB' },
+      { value: 'ws2022-standard', label: 'Windows Server 2022 Standard', imageName: 'Windows Server 2022 ServerStandard', ram: '1 GB', disk: '25 GB', tag: '稳定' },
+      { value: 'ws2022-datacenter', label: 'Windows Server 2022 Datacenter', imageName: 'Windows Server 2022 ServerDatacenter', ram: '1 GB', disk: '25 GB' },
+      { value: 'ws2019-standard', label: 'Windows Server 2019 Standard', imageName: 'Windows Server 2019 ServerStandard', ram: '1 GB', disk: '25 GB' },
+      { value: 'ws2019-datacenter', label: 'Windows Server 2019 Datacenter', imageName: 'Windows Server 2019 ServerDatacenter', ram: '1 GB', disk: '25 GB' },
+      { value: 'ws2016-standard', label: 'Windows Server 2016 Standard', imageName: 'Windows Server 2016 ServerStandard', ram: '1 GB', disk: '25 GB' },
+      { value: 'ws2016-datacenter', label: 'Windows Server 2016 Datacenter', imageName: 'Windows Server 2016 ServerDatacenter', ram: '1 GB', disk: '25 GB' },
+      { value: 'ws2012r2-standard', label: 'Windows Server 2012 R2 Standard', imageName: 'Windows Server 2012 R2 ServerStandard', ram: '512 MB', disk: '25 GB', tag: '旧版', note: '旧版 Windows Server 可能存在驱动兼容性限制，建议优先使用 2019 或更新版本。' },
+      { value: 'ws2008r2-standard', label: 'Windows Server 2008 R2 Standard', imageName: 'Windows Server 2008 R2 ServerStandard', ram: '512 MB', disk: '25 GB', tag: '旧版', note: 'Server 2008 R2 在 EFI / 新硬件平台可能缺少驱动；Hyper-V / Azure 需使用第 1 代虚拟机。' }
+    ]},
     { id: 'alpine', name: 'Alpine Linux', avatar: 'A', meta: '极简、低资源占用', versions: [
       { value: '3.24', label: '3.24', tag: '推荐' }, { value: '3.23', label: '3.23' }, { value: '3.22', label: '3.22' }, { value: '3.21', label: '3.21' }
     ]},
@@ -53,12 +76,19 @@
     fygoos: { ram: '512 MB', disk: '10 GB', note: 'NAS 系统，实际使用建议预留更多存储空间。' }
   };
 
+  const WINDOWS_LANGUAGES = [
+    ['zh-cn', '简体中文'], ['zh-tw', '繁體中文'], ['zh-hk', '繁體中文（香港）'], ['en-us', 'English'], ['en-gb', 'English (UK)'],
+    ['ja-jp', '日本語'], ['ko-kr', '한국어'], ['de-de', 'Deutsch'], ['fr-fr', 'Français'], ['es-es', 'Español'], ['es-mx', 'Español (Latam)'],
+    ['it-it', 'Italiano'], ['pt-br', 'Português (Brasil)'], ['pt-pt', 'Português'], ['ru-ru', 'Русский'], ['nl-nl', 'Nederlands'], ['pl-pl', 'Polski'],
+    ['tr-tr', 'Türkçe'], ['uk-ua', 'Українська'], ['th-th', 'ไทย']
+  ];
+
   const DOWNLOAD_URLS = {
     overseas: 'https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh',
     china: 'https://cnb.cool/bin456789/reinstall/-/git/raw/main/reinstall.sh'
   };
 
-  const state = { distro: 'debian', version: '13', passwordMode: 'random', passwordVisible: false, region: 'overseas' };
+  const state = { distro: 'debian', version: '13', passwordMode: 'random', passwordVisible: false, region: 'overseas', isoMode: 'auto' };
   const $ = id => document.getElementById(id);
   let requirementsCard = null;
   let toastTimer = null;
@@ -66,6 +96,51 @@
   function currentSystem() { return SYSTEMS.find(s => s.id === state.distro) || SYSTEMS[0]; }
   function currentVersion() { return currentSystem().versions.find(v => v.value === state.version) || currentSystem().versions[0]; }
   function savePreference(key, value) { try { localStorage.setItem(key, value); } catch (_) {} }
+
+  function ensureWindowsFields() {
+    if ($('windowsOptions')) return;
+    const imageUrlGroup = $('imageUrlGroup');
+    if (!imageUrlGroup) return;
+    const wrapper = document.createElement('div');
+    wrapper.id = 'windowsOptions';
+    wrapper.className = 'windows-options hidden';
+    wrapper.innerHTML = `
+      <div class="field-row two-col windows-row">
+        <div class="field-group">
+          <label for="windowsLang">系统语言</label>
+          <div class="select-native-wrap">
+            <select id="windowsLang"></select>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="rdpPort">RDP 端口</label>
+          <input class="text-input" id="rdpPort" type="number" min="1" max="65535" inputmode="numeric" value="3389" autocomplete="off">
+          <p class="field-error" id="rdpPortError"></p>
+        </div>
+      </div>
+      <div class="field-group windows-iso-group">
+        <label>ISO 来源</label>
+        <div class="segmented windows-iso-segmented" role="group" aria-label="Windows ISO 来源">
+          <button type="button" class="segment active" data-iso-mode="auto">自动查找官方 ISO</button>
+          <button type="button" class="segment" data-iso-mode="custom">自定义 ISO</button>
+        </div>
+        <div class="windows-custom-iso hidden" id="windowsCustomIso">
+          <input class="text-input" id="windowsIsoUrl" type="text" inputmode="url" autocomplete="off" placeholder="https://...windows.iso 或 magnet:?xt=...">
+          <p class="field-error" id="windowsIsoError"></p>
+          <p class="field-hint" id="windowsIsoHint">自定义 ISO 必须包含当前选择的 Windows 映像名称。</p>
+        </div>
+        <p class="field-hint windows-auto-hint" id="windowsAutoHint">由上游脚本自动查找对应的官方原版 ISO。</p>
+      </div>`;
+    imageUrlGroup.insertAdjacentElement('afterend', wrapper);
+    const lang = $('windowsLang');
+    WINDOWS_LANGUAGES.forEach(([value, label]) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = label;
+      lang.appendChild(option);
+    });
+  }
 
   function restorePreferences() {
     try {
@@ -82,6 +157,12 @@
       if (port && /^\d+$/.test(port)) $('sshPort').value = port;
       const length = localStorage.getItem('lr-password-length');
       if (['16', '20', '24', '32'].includes(length)) $('passwordLength').value = length;
+      const winLang = localStorage.getItem('lr-win-lang');
+      if (winLang && WINDOWS_LANGUAGES.some(([value]) => value === winLang)) $('windowsLang').value = winLang;
+      const rdp = localStorage.getItem('lr-win-rdp');
+      if (rdp && /^\d+$/.test(rdp)) $('rdpPort').value = rdp;
+      const isoMode = localStorage.getItem('lr-win-iso-mode');
+      if (isoMode === 'auto' || isoMode === 'custom') state.isoMode = isoMode;
     } catch (_) {}
   }
 
@@ -117,6 +198,7 @@
     try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:'; }
     catch (_) { return false; }
   }
+  function isValidIsoSource(value) { return isValidHttpUrl(value) || /^magnet:\?xt=/i.test(value); }
   function validatePassword() {
     const value = $('passwordInput').value;
     if (!value) return { ok: false, message: '请输入或生成密码。' };
@@ -124,13 +206,15 @@
     if (value.length > 128) return { ok: false, message: '密码长度请控制在 128 个字符以内。' };
     return { ok: true, message: '' };
   }
-  function validatePort() {
-    const value = $('sshPort').value.trim();
-    if (!/^\d+$/.test(value)) return { ok: false, message: 'SSH 端口必须是数字。' };
-    const port = Number(value);
+  function validatePortValue(value, label) {
+    const text = String(value).trim();
+    if (!/^\d+$/.test(text)) return { ok: false, message: `${label}必须是数字。` };
+    const port = Number(text);
     if (port < 1 || port > 65535) return { ok: false, message: '端口范围应为 1–65535。' };
     return { ok: true, message: '' };
   }
+  function validatePort() { return validatePortValue($('sshPort').value, 'SSH 端口'); }
+  function validateRdpPort() { return validatePortValue($('rdpPort').value, 'RDP 端口'); }
 
   function getStrength(password) {
     if (!password) return { score: 0, label: '—' };
@@ -146,20 +230,35 @@
 
   function buildCommand(maskPassword = false) {
     const system = currentSystem();
+    const version = currentVersion();
     if (!validatePassword().ok || !validatePort().ok) return '';
     if (system.requiresImage && !isValidHttpUrl($('imageUrl').value.trim())) return '';
+    if (system.windows && !validateRdpPort().ok) return '';
+    if (system.windows && state.isoMode === 'custom' && !isValidIsoSource($('windowsIsoUrl').value.trim())) return '';
 
     const args = [];
-    if (system.requiresImage) {
+    if (system.windows) {
+      args.push('windows');
+      args.push(`--image-name ${shellQuote(version.imageName)}`);
+      args.push(`--lang ${$('windowsLang').value}`);
+      if (state.isoMode === 'custom') args.push(`--iso ${shellQuote($('windowsIsoUrl').value.trim())}`);
+      args.push('--username administrator');
+      args.push(`--password ${shellQuote(maskPassword ? '••••••••••••••••••••' : $('passwordInput').value)}`);
+      args.push(`--rdp-port ${$('rdpPort').value.trim()}`);
+      args.push(`--ssh-port ${$('sshPort').value.trim()}`);
+    } else if (system.requiresImage) {
       args.push('redhat');
       args.push(`--img=${shellQuote($('imageUrl').value.trim())}`);
+      args.push('--username root');
+      args.push(`--password ${shellQuote(maskPassword ? '••••••••••••••••••••' : $('passwordInput').value)}`);
+      args.push(`--ssh-port ${$('sshPort').value.trim()}`);
     } else {
       args.push(system.id);
       if (state.version) args.push(state.version);
+      args.push('--username root');
+      args.push(`--password ${shellQuote(maskPassword ? '••••••••••••••••••••' : $('passwordInput').value)}`);
+      args.push(`--ssh-port ${$('sshPort').value.trim()}`);
     }
-    args.push('--username root');
-    args.push(`--password ${shellQuote(maskPassword ? '••••••••••••••••••••' : $('passwordInput').value)}`);
-    args.push(`--ssh-port ${$('sshPort').value.trim()}`);
 
     const slash = '\\';
     const downloadUrl = DOWNLOAD_URLS[state.region];
@@ -196,9 +295,11 @@
     if (!card) return;
     const system = currentSystem();
     const version = currentVersion();
-    const req = REQUIREMENTS[system.id] || { ram: '—', disk: '—', note: '暂无最低配置数据，请以目标系统官方要求为准。' };
+    const req = system.windows
+      ? { ram: version.ram, disk: version.disk, note: version.note || 'Windows ISO 安装；上游会自动按需注入 VirtIO 与常见云厂商驱动。' }
+      : (REQUIREMENTS[system.id] || { ram: '—', disk: '—', note: '暂无最低配置数据，请以目标系统官方要求为准。' });
     const versionText = system.requiresImage ? '8 / 9 / 10' : (system.rolling ? 'Rolling' : version.label);
-    card.querySelector('[data-req-system]').textContent = `${system.name} ${versionText}`;
+    card.querySelector('[data-req-system]').textContent = system.windows ? version.label : `${system.name} ${versionText}`;
     card.querySelector('[data-req-ram]').textContent = req.ram;
     card.querySelector('[data-req-disk]').textContent = req.disk;
     card.querySelector('[data-req-note]').textContent = req.note;
@@ -209,7 +310,7 @@
     const container = $('distroOptions');
     container.innerHTML = '';
     if (!list.length) {
-      container.innerHTML = '<div class="no-results">没有匹配的发行版</div>';
+      container.innerHTML = '<div class="no-results">没有匹配的系统</div>';
       return;
     }
     list.forEach(system => {
@@ -225,6 +326,33 @@
       });
       container.appendChild(button);
     });
+  }
+
+  function applySystemLabels() {
+    const system = currentSystem();
+    const isWindows = !!system.windows;
+    const passwordLabel = document.querySelector('.label-row label');
+    const sshLabel = document.querySelector('label[for="sshPort"]');
+    if (passwordLabel) passwordLabel.textContent = isWindows ? 'Administrator 密码' : 'Root 密码';
+    $('passwordInput').setAttribute('aria-label', isWindows ? 'Administrator 密码' : 'Root 密码');
+    if (sshLabel) sshLabel.textContent = isWindows ? '安装日志 SSH 端口' : 'SSH 端口';
+
+    const summaryCells = document.querySelectorAll('.summary-grid > div');
+    if (summaryCells.length >= 3) {
+      summaryCells[1].querySelector('strong').textContent = isWindows ? 'administrator' : 'root';
+      summaryCells[2].querySelector('span').textContent = isWindows ? 'RDP' : 'SSH';
+    }
+  }
+
+  function renderWindowsOptions() {
+    const system = currentSystem();
+    const isWindows = !!system.windows;
+    $('windowsOptions').classList.toggle('hidden', !isWindows);
+    if (!isWindows) return;
+    document.querySelectorAll('[data-iso-mode]').forEach(button => button.classList.toggle('active', button.dataset.isoMode === state.isoMode));
+    $('windowsCustomIso').classList.toggle('hidden', state.isoMode !== 'custom');
+    $('windowsAutoHint').classList.toggle('hidden', state.isoMode !== 'auto');
+    $('windowsIsoHint').textContent = `自定义 ISO 必须包含映像：${currentVersion().imageName}`;
   }
 
   function renderSystem() {
@@ -246,6 +374,8 @@
     $('versionHint').textContent = system.rolling ? '该发行版采用 Rolling Release，无需选择固定版本。' : (system.requiresImage ? 'RHEL 需要提供从 Red Hat 官方获取的 QCOW2 镜像地址。' : '');
     $('imageUrlGroup').classList.toggle('hidden', !system.requiresImage);
     $('specialPasswordNote').classList.toggle('hidden', !system.specialPassword);
+    applySystemLabels();
+    renderWindowsOptions();
     renderDistroOptions($('distroSearch').value);
     validateAndRender();
   }
@@ -283,15 +413,20 @@
     const port = validatePort();
     const system = currentSystem();
     const imageOk = !system.requiresImage || isValidHttpUrl($('imageUrl').value.trim());
-    const valid = pass.ok && port.ok && imageOk;
+    const rdp = system.windows ? validateRdpPort() : { ok: true, message: '' };
+    const isoOk = !system.windows || state.isoMode === 'auto' || isValidIsoSource($('windowsIsoUrl').value.trim());
+    const valid = pass.ok && port.ok && imageOk && rdp.ok && isoOk;
+
     $('passwordError').textContent = pass.message;
     $('portError').textContent = port.message;
+    $('rdpPortError').textContent = system.windows ? rdp.message : '';
+    $('windowsIsoError').textContent = system.windows && state.isoMode === 'custom' && !isoOk ? '请输入有效的 http(s) ISO 地址或 magnet 链接。' : '';
     if (system.requiresImage) $('versionHint').textContent = imageOk || !$('imageUrl').value.trim() ? 'RHEL 需要提供从 Red Hat 官方获取的 QCOW2 镜像地址。' : '请输入有效的 http:// 或 https:// QCOW2 镜像地址。';
 
     const version = currentVersion();
     const versionText = system.requiresImage ? '自定义镜像' : (system.rolling ? 'Rolling' : version.label);
-    $('summarySystem').textContent = `${system.name} ${versionText}`;
-    $('summaryPort').textContent = port.ok ? $('sshPort').value.trim() : '—';
+    $('summarySystem').textContent = system.windows ? version.label : `${system.name} ${versionText}`;
+    $('summaryPort').textContent = system.windows ? (rdp.ok ? $('rdpPort').value.trim() : '—') : (port.ok ? $('sshPort').value.trim() : '—');
     $('summaryRegion').textContent = state.region === 'china' ? '中国大陆' : '海外';
     $('commandPreview').textContent = buildCommand(!state.passwordVisible) || '请完成有效配置后生成命令。';
     $('copyCommand').disabled = !valid;
@@ -313,6 +448,12 @@
     state.region = region;
     document.querySelectorAll('[data-region]').forEach(button => button.classList.toggle('active', button.dataset.region === region));
     savePreference('lr-region', region);
+    validateAndRender();
+  }
+  function setIsoMode(mode) {
+    state.isoMode = mode;
+    savePreference('lr-win-iso-mode', mode);
+    renderWindowsOptions();
     validateAndRender();
   }
   function setVisibility(visible) {
@@ -359,11 +500,17 @@
     $('versionSelect').addEventListener('change', () => {
       state.version = $('versionSelect').value;
       savePreference('lr-version', state.version);
+      renderWindowsOptions();
       validateAndRender();
     });
     $('imageUrl').addEventListener('input', validateAndRender);
     document.querySelectorAll('[data-password-mode]').forEach(button => button.addEventListener('click', () => setPasswordMode(button.dataset.passwordMode)));
     document.querySelectorAll('[data-region]').forEach(button => button.addEventListener('click', () => setRegion(button.dataset.region)));
+    document.querySelectorAll('[data-iso-mode]').forEach(button => button.addEventListener('click', () => setIsoMode(button.dataset.isoMode)));
+    $('windowsLang').addEventListener('change', () => { savePreference('lr-win-lang', $('windowsLang').value); validateAndRender(); });
+    $('rdpPort').addEventListener('input', () => { savePreference('lr-win-rdp', $('rdpPort').value); validateAndRender(); });
+    $('rdpPort').addEventListener('blur', () => { if (!$('rdpPort').value.trim()) $('rdpPort').value = '3389'; validateAndRender(); });
+    $('windowsIsoUrl').addEventListener('input', validateAndRender);
     $('passwordInput').addEventListener('input', validateAndRender);
     $('passwordInput').addEventListener('paste', () => setTimeout(validateAndRender, 0));
     $('passwordLength').addEventListener('change', () => {
@@ -386,6 +533,7 @@
   }
 
   function init() {
+    ensureWindowsFields();
     restorePreferences();
     renderSystem();
     setRegion(state.region);
