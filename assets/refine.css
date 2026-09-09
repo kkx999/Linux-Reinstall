@@ -54,20 +54,72 @@
 }
 .config-panel .form-stack { flex: 0 0 auto; }
 
-/* Compact preflight strip: useful content without visually filling the whole spare area. */
+/* Old pseudo-element reminder is retired in favor of a real dynamic requirements card. */
 .config-panel::after {
-  content: "执行前确认\A✓ 数据已备份    ✓ Root 密码已保存    ✓ 虚拟化环境已确认\AOpenVZ / LXC 不受支持";
-  white-space: pre-line;
-  display: block;
+  content: none;
+  display: none;
+}
+
+.requirements-card {
   margin-top: auto;
-  padding: 13px 15px;
+  padding: 14px 15px;
   border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
-  border-radius: 13px;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 70%, transparent), var(--input));
+  border-radius: 14px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 64%, transparent), var(--input));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+.requirements-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+}
+.requirements-head span {
   color: var(--muted);
   font-size: 10px;
-  line-height: 1.75;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+  font-weight: 650;
+}
+.requirements-head strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 720;
+}
+.requirements-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.requirements-grid > div {
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--input) 82%, transparent);
+}
+.requirements-grid span,
+.requirements-grid strong {
+  display: block;
+}
+.requirements-grid span {
+  margin-bottom: 4px;
+  color: var(--subtle);
+  font-size: 9px;
+}
+.requirements-grid strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 740;
+  letter-spacing: -.01em;
+}
+.requirements-card p {
+  margin: 9px 2px 0;
+  color: var(--subtle);
+  font-size: 9px;
+  line-height: 1.55;
 }
 
 /* Keep the status text compact after switching to Chinese labels. */
@@ -101,10 +153,7 @@
   padding-top: 1px;
 }
 
-/*
- * style.css has a broad `.info-strip span` rule that also matches the icon wrapper.
- * Use higher specificity here so the icon wrapper remains an actual centered square.
- */
+/* style.css has a broad `.info-strip span` rule; keep icon wrappers isolated from it. */
 .info-strip .info-icon {
   width: 34px;
   height: 34px;
@@ -139,7 +188,7 @@
     gap: 20px;
   }
   .tool-grid > .panel { height: auto; }
-  .config-panel::after { margin-top: 22px; }
+  .requirements-card { margin-top: 22px; }
   .info-strip {
     gap: 14px;
     margin-top: 22px;
@@ -149,11 +198,10 @@
 @media (max-width: 620px) {
   .hero-actions { margin-top: 20px; }
   .hero-cta { width: 100%; min-height: 50px; }
-  .config-panel::after {
+  .requirements-card {
     padding: 13px 14px;
-    font-size: 9.5px;
-    line-height: 1.8;
   }
+  .requirements-grid strong { font-size: 12px; }
   .info-strip > div {
     min-height: 0;
     padding: 16px;
