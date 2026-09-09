@@ -2,6 +2,8 @@
 
 一个纯前端的 VPS Linux 系统重装命令生成器，基于 [bin456789/reinstall](https://github.com/bin456789/reinstall) 的公开用法生成命令。
 
+[![立即使用](https://img.shields.io/badge/立即使用-打开在线工具-1689c7?style=for-the-badge&logo=linux&logoColor=white)](https://kkx999.github.io/Linux-Reinstall/)
+
 > 本项目不是 `bin456789/reinstall` 的官方项目，也不修改或托管上游重装脚本。
 
 ## 特性
