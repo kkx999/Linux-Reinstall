@@ -24,7 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Validate JavaScript
-        run: node --check assets/app.js
+        run: |
+          node --check assets/app.js
+          node --check assets/refine.js
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
