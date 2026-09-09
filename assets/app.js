@@ -58,147 +58,74 @@
     china: 'https://cnb.cool/bin456789/reinstall/-/git/raw/main/reinstall.sh'
   };
 
-  const state = {
-    distro: 'debian',
-    version: '13',
-    passwordMode: 'random',
-    passwordVisible: false,
-    region: 'overseas'
-  };
-
-  const $ = (id) => document.getElementById(id);
-  const els = {
-    distroSelect: $('distroSelect'), distroButton: $('distroButton'), distroMenu: $('distroMenu'), distroOptions: $('distroOptions'), distroSearch: $('distroSearch'),
-    distroAvatar: $('distroAvatar'), distroLabel: $('distroLabel'), distroMeta: $('distroMeta'), versionSelect: $('versionSelect'), versionHint: $('versionHint'),
-    imageUrlGroup: $('imageUrlGroup'), imageUrl: $('imageUrl'), passwordInput: $('passwordInput'), passwordLength: $('passwordLength'), randomTools: $('randomTools'),
-    regeneratePassword: $('regeneratePassword'), copyPassword: $('copyPassword'), visibilityToggle: $('visibilityToggle'), passwordError: $('passwordError'), specialPasswordNote: $('specialPasswordNote'),
-    sshPort: $('sshPort'), portError: $('portError'), summarySystem: $('summarySystem'), summaryPort: $('summaryPort'), summaryRegion: $('summaryRegion'),
-    commandPreview: $('commandPreview'), copyCommand: $('copyCommand'), terminalCopy: $('terminalCopy'), copyReset: $('copyReset'), readyBadge: $('readyBadge'),
-    themeToggle: $('themeToggle'), toast: $('toast'), toastText: $('toastText')
-  };
-
+  const state = { distro: 'debian', version: '13', passwordMode: 'random', passwordVisible: false, region: 'overseas' };
+  const $ = id => document.getElementById(id);
   let requirementsCard = null;
+  let toastTimer = null;
 
   function currentSystem() { return SYSTEMS.find(s => s.id === state.distro) || SYSTEMS[0]; }
   function currentVersion() { return currentSystem().versions.find(v => v.value === state.version) || currentSystem().versions[0]; }
-
-  function ensureRequirementsCard() {
-    if (requirementsCard) return requirementsCard;
-    const panel = document.querySelector('.config-panel');
-    if (!panel) return null;
-
-    const card = document.createElement('div');
-    card.className = 'requirements-card';
-    card.innerHTML = `
-      <div class="requirements-head">
-        <span>最低配置</span>
-        <strong data-req-system>—</strong>
-      </div>
-      <div class="requirements-grid">
-        <div><span>最低内存</span><strong data-req-ram>—</strong></div>
-        <div><span>最低磁盘</span><strong data-req-disk>—</strong></div>
-      </div>
-      <p data-req-note></p>
-    `;
-    panel.appendChild(card);
-    requirementsCard = card;
-    return card;
-  }
-
-  function renderRequirements() {
-    const card = ensureRequirementsCard();
-    if (!card) return;
-    const system = currentSystem();
-    const version = currentVersion();
-    const req = REQUIREMENTS[system.id] || { ram: '—', disk: '—', note: '暂无最低配置数据，请以目标系统官方要求为准。' };
-    const versionText = system.requiresImage ? '8 / 9 / 10' : (system.rolling ? 'Rolling' : version.label);
-
-    card.querySelector('[data-req-system]').textContent = `${system.name} ${versionText}`;
-    card.querySelector('[data-req-ram]').textContent = req.ram;
-    card.querySelector('[data-req-disk]').textContent = req.disk;
-    card.querySelector('[data-req-note]').textContent = req.note;
-  }
+  function savePreference(key, value) { try { localStorage.setItem(key, value); } catch (_) {} }
 
   function restorePreferences() {
     try {
       const savedDistro = localStorage.getItem('lr-distro');
-      const savedVersion = localStorage.getItem('lr-version');
-      const savedPort = localStorage.getItem('lr-port');
-      const savedRegion = localStorage.getItem('lr-region');
-      const savedLength = localStorage.getItem('lr-password-length');
-      const savedTheme = localStorage.getItem('lr-theme');
-
       if (SYSTEMS.some(s => s.id === savedDistro)) state.distro = savedDistro;
       const system = currentSystem();
+      const savedVersion = localStorage.getItem('lr-version');
       state.version = system.versions.some(v => v.value === savedVersion) ? savedVersion : system.versions[0].value;
-      if (savedPort && /^\d+$/.test(savedPort)) els.sshPort.value = savedPort;
+      const savedRegion = localStorage.getItem('lr-region');
       if (savedRegion === 'china' || savedRegion === 'overseas') state.region = savedRegion;
-      if (['16','20','24','32'].includes(savedLength)) els.passwordLength.value = savedLength;
-
-      let theme = savedTheme;
-      if (!theme) theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      document.documentElement.dataset.theme = theme;
-    } catch (_) { /* localStorage may be unavailable */ }
-  }
-
-  function savePreference(key, value) {
-    try { localStorage.setItem(key, value); } catch (_) {}
+      const savedTheme = localStorage.getItem('lr-theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = savedTheme;
+      const port = localStorage.getItem('lr-port');
+      if (port && /^\d+$/.test(port)) $('sshPort').value = port;
+      const length = localStorage.getItem('lr-password-length');
+      if (['16', '20', '24', '32'].includes(length)) $('passwordLength').value = length;
+    } catch (_) {}
   }
 
   function secureRandomInt(max) {
     if (max <= 0) return 0;
-    const maxUint = 0xffffffff;
-    const limit = maxUint - (maxUint % max);
-    const buf = new Uint32Array(1);
-    do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
-    return buf[0] % max;
+    const buffer = new Uint32Array(1);
+    const limit = 0xffffffff - (0xffffffff % max);
+    do { crypto.getRandomValues(buffer); } while (buffer[0] >= limit);
+    return buffer[0] % max;
   }
 
-  function shuffleSecure(chars) {
-    const arr = [...chars];
-    for (let i = arr.length - 1; i > 0; i--) {
+  function shuffleSecure(value) {
+    const chars = [...value];
+    for (let i = chars.length - 1; i > 0; i--) {
       const j = secureRandomInt(i + 1);
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      [chars[i], chars[j]] = [chars[j], chars[i]];
     }
-    return arr.join('');
+    return chars.join('');
   }
 
   function generatePassword() {
-    const length = Number(els.passwordLength.value) || 20;
-    const groups = [
-      'ABCDEFGHJKLMNPQRSTUVWXYZ',
-      'abcdefghijkmnopqrstuvwxyz',
-      '23456789',
-      '!@#$%^&*_-+=' 
-    ];
+    const length = Number($('passwordLength').value) || 20;
+    const groups = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnopqrstuvwxyz', '23456789', '!@#$%^&*_-+='];
     const all = groups.join('');
-    let output = groups.map(group => group[secureRandomInt(group.length)]).join('');
-    while (output.length < length) output += all[secureRandomInt(all.length)];
-    els.passwordInput.value = shuffleSecure(output);
+    let value = groups.map(group => group[secureRandomInt(group.length)]).join('');
+    while (value.length < length) value += all[secureRandomInt(all.length)];
+    $('passwordInput').value = shuffleSecure(value);
     validateAndRender();
   }
 
-  function shellQuote(value) {
-    return `'${String(value).replace(/'/g, `'"'"'`)}'`;
-  }
-
+  function shellQuote(value) { return `'${String(value).replace(/'/g, `'"'"'`)}'`; }
   function isValidHttpUrl(value) {
-    try {
-      const url = new URL(value);
-      return url.protocol === 'https:' || url.protocol === 'http:';
-    } catch (_) { return false; }
+    try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:'; }
+    catch (_) { return false; }
   }
-
   function validatePassword() {
-    const value = els.passwordInput.value;
+    const value = $('passwordInput').value;
     if (!value) return { ok: false, message: '请输入或生成密码。' };
     if (/[\r\n\0]/.test(value)) return { ok: false, message: '密码不能包含换行或空字符。' };
     if (value.length > 128) return { ok: false, message: '密码长度请控制在 128 个字符以内。' };
     return { ok: true, message: '' };
   }
-
   function validatePort() {
-    const value = String(els.sshPort.value).trim();
+    const value = $('sshPort').value.trim();
     if (!/^\d+$/.test(value)) return { ok: false, message: 'SSH 端口必须是数字。' };
     const port = Number(value);
     if (port < 1 || port > 65535) return { ok: false, message: '端口范围应为 1–65535。' };
@@ -213,48 +140,76 @@
     const variety = [/[a-z]/, /[A-Z]/, /\d/, /[^A-Za-z0-9]/].filter(r => r.test(password)).length;
     if (variety >= 3) score++;
     if (variety === 4 && password.length >= 18) score++;
-    score = Math.min(4, Math.max(1, score));
-    return { score, label: ['','弱','一般','良好','强'][score] };
+    score = Math.max(1, Math.min(4, score));
+    return { score, label: ['', '弱', '一般', '良好', '强'][score] };
   }
 
   function buildCommand(maskPassword = false) {
     const system = currentSystem();
-    const pass = validatePassword();
-    const port = validatePort();
-    if (!pass.ok || !port.ok) return '';
+    if (!validatePassword().ok || !validatePort().ok) return '';
+    if (system.requiresImage && !isValidHttpUrl($('imageUrl').value.trim())) return '';
 
-    if (system.requiresImage && !isValidHttpUrl(els.imageUrl.value.trim())) return '';
-
-    const downloadUrl = DOWNLOAD_URLS[state.region];
-    const displayPassword = maskPassword ? '••••••••••••••••••••' : els.passwordInput.value;
     const args = [];
-
     if (system.requiresImage) {
       args.push('redhat');
-      args.push(`--img=${shellQuote(els.imageUrl.value.trim())}`);
+      args.push(`--img=${shellQuote($('imageUrl').value.trim())}`);
     } else {
       args.push(system.id);
       if (state.version) args.push(state.version);
     }
-
     args.push('--username root');
-    args.push(`--password ${shellQuote(displayPassword)}`);
-    args.push(`--ssh-port ${els.sshPort.value.trim()}`);
+    args.push(`--password ${shellQuote(maskPassword ? '••••••••••••••••••••' : $('passwordInput').value)}`);
+    args.push(`--ssh-port ${$('sshPort').value.trim()}`);
 
-    return `(curl -O ${downloadUrl} || wget -O reinstall.sh ${downloadUrl}) && \\
-  bash reinstall.sh ${args.join(' \\
-    ')}`;
+    const slash = '\\';
+    const downloadUrl = DOWNLOAD_URLS[state.region];
+    const lines = [`(curl -O ${downloadUrl} || wget -O reinstall.sh ${downloadUrl}) && ${slash}`];
+    const target = args.shift();
+    if (args.length) {
+      lines.push(`  bash reinstall.sh ${target} ${slash}`);
+      args.forEach((arg, index) => lines.push(`    ${arg}${index < args.length - 1 ? ` ${slash}` : ''}`));
+    } else {
+      lines.push(`  bash reinstall.sh ${target}`);
+    }
+    return lines.join('\n');
+  }
+
+  function ensureRequirementsCard() {
+    if (requirementsCard) return requirementsCard;
+    const panel = document.querySelector('.config-panel');
+    if (!panel) return null;
+    requirementsCard = document.createElement('div');
+    requirementsCard.className = 'requirements-card';
+    requirementsCard.innerHTML = `
+      <div class="requirements-head"><span>最低配置</span><strong data-req-system>—</strong></div>
+      <div class="requirements-grid">
+        <div><span>最低内存</span><strong data-req-ram>—</strong></div>
+        <div><span>最低磁盘</span><strong data-req-disk>—</strong></div>
+      </div>
+      <p data-req-note></p>`;
+    panel.appendChild(requirementsCard);
+    return requirementsCard;
+  }
+
+  function renderRequirements() {
+    const card = ensureRequirementsCard();
+    if (!card) return;
+    const system = currentSystem();
+    const version = currentVersion();
+    const req = REQUIREMENTS[system.id] || { ram: '—', disk: '—', note: '暂无最低配置数据，请以目标系统官方要求为准。' };
+    const versionText = system.requiresImage ? '8 / 9 / 10' : (system.rolling ? 'Rolling' : version.label);
+    card.querySelector('[data-req-system]').textContent = `${system.name} ${versionText}`;
+    card.querySelector('[data-req-ram]').textContent = req.ram;
+    card.querySelector('[data-req-disk]').textContent = req.disk;
+    card.querySelector('[data-req-note]').textContent = req.note;
   }
 
   function renderDistroOptions(filter = '') {
-    const keyword = filter.trim().toLowerCase();
-    const list = SYSTEMS.filter(s => `${s.name} ${s.id} ${s.meta}`.toLowerCase().includes(keyword));
-    els.distroOptions.innerHTML = '';
+    const list = SYSTEMS.filter(system => `${system.name} ${system.id} ${system.meta}`.toLowerCase().includes(filter.trim().toLowerCase()));
+    const container = $('distroOptions');
+    container.innerHTML = '';
     if (!list.length) {
-      const empty = document.createElement('div');
-      empty.className = 'no-results';
-      empty.textContent = '没有匹配的发行版';
-      els.distroOptions.appendChild(empty);
+      container.innerHTML = '<div class="no-results">没有匹配的发行版</div>';
       return;
     }
     list.forEach(system => {
@@ -264,35 +219,34 @@
       button.setAttribute('role', 'option');
       button.setAttribute('aria-selected', system.id === state.distro ? 'true' : 'false');
       button.innerHTML = `<span class="system-avatar">${system.avatar}</span><span><strong>${system.name}</strong><small>${system.meta}</small></span>`;
-      button.addEventListener('click', () => selectDistro(system.id));
-      els.distroOptions.appendChild(button);
+      button.addEventListener('click', event => {
+        event.stopPropagation();
+        selectDistro(system.id);
+      });
+      container.appendChild(button);
     });
   }
 
   function renderSystem() {
     const system = currentSystem();
-    els.distroAvatar.textContent = system.avatar;
-    els.distroLabel.textContent = system.name;
-    els.distroMeta.textContent = system.meta;
-    els.versionSelect.innerHTML = '';
-
+    $('distroAvatar').textContent = system.avatar;
+    $('distroLabel').textContent = system.name;
+    $('distroMeta').textContent = system.meta;
+    const select = $('versionSelect');
+    select.innerHTML = '';
     system.versions.forEach(version => {
-      const opt = document.createElement('option');
-      opt.value = version.value;
-      opt.textContent = version.tag ? `${version.label} · ${version.tag}` : version.label;
-      els.versionSelect.appendChild(opt);
+      const option = document.createElement('option');
+      option.value = version.value;
+      option.textContent = version.tag ? `${version.label} · ${version.tag}` : version.label;
+      select.appendChild(option);
     });
     if (!system.versions.some(v => v.value === state.version)) state.version = system.versions[0].value;
-    els.versionSelect.value = state.version;
-    els.versionSelect.disabled = system.versions.length === 1 && (system.rolling || system.requiresImage);
-
-    if (system.rolling) els.versionHint.textContent = '该发行版采用 Rolling Release，无需选择固定版本。';
-    else if (system.requiresImage) els.versionHint.textContent = 'RHEL 需要提供从 Red Hat 官方获取的 QCOW2 镜像地址。';
-    else els.versionHint.textContent = '';
-
-    els.imageUrlGroup.classList.toggle('hidden', !system.requiresImage);
-    els.specialPasswordNote.classList.toggle('hidden', !system.specialPassword);
-    renderDistroOptions(els.distroSearch.value);
+    select.value = state.version;
+    select.disabled = system.versions.length === 1 && (system.rolling || system.requiresImage);
+    $('versionHint').textContent = system.rolling ? '该发行版采用 Rolling Release，无需选择固定版本。' : (system.requiresImage ? 'RHEL 需要提供从 Red Hat 官方获取的 QCOW2 镜像地址。' : '');
+    $('imageUrlGroup').classList.toggle('hidden', !system.requiresImage);
+    $('specialPasswordNote').classList.toggle('hidden', !system.specialPassword);
+    renderDistroOptions($('distroSearch').value);
     validateAndRender();
   }
 
@@ -306,19 +260,19 @@
   }
 
   function openDistroMenu() {
-    els.distroSelect.classList.add('open');
-    els.distroButton.setAttribute('aria-expanded', 'true');
-    setTimeout(() => els.distroSearch.focus(), 0);
+    $('distroSelect').classList.add('open');
+    $('distroButton').setAttribute('aria-expanded', 'true');
+    setTimeout(() => $('distroSearch').focus(), 0);
   }
   function closeDistroMenu() {
-    els.distroSelect.classList.remove('open');
-    els.distroButton.setAttribute('aria-expanded', 'false');
-    els.distroSearch.value = '';
+    $('distroSelect').classList.remove('open');
+    $('distroButton').setAttribute('aria-expanded', 'false');
+    $('distroSearch').value = '';
     renderDistroOptions();
   }
 
   function renderStrength() {
-    const result = getStrength(els.passwordInput.value);
+    const result = getStrength($('passwordInput').value);
     const bars = document.querySelector('.strength-bars');
     bars.dataset.score = String(result.score);
     $('strengthText').textContent = result.label;
@@ -328,138 +282,107 @@
     const pass = validatePassword();
     const port = validatePort();
     const system = currentSystem();
-    const imageOk = !system.requiresImage || isValidHttpUrl(els.imageUrl.value.trim());
+    const imageOk = !system.requiresImage || isValidHttpUrl($('imageUrl').value.trim());
     const valid = pass.ok && port.ok && imageOk;
-
-    els.passwordError.textContent = pass.message;
-    els.portError.textContent = port.message;
-    if (system.requiresImage && els.imageUrl.value.trim() && !imageOk) {
-      els.versionHint.textContent = '请输入有效的 http:// 或 https:// QCOW2 镜像地址。';
-    } else if (system.requiresImage) {
-      els.versionHint.textContent = 'RHEL 需要提供从 Red Hat 官方获取的 QCOW2 镜像地址。';
-    }
+    $('passwordError').textContent = pass.message;
+    $('portError').textContent = port.message;
+    if (system.requiresImage) $('versionHint').textContent = imageOk || !$('imageUrl').value.trim() ? 'RHEL 需要提供从 Red Hat 官方获取的 QCOW2 镜像地址。' : '请输入有效的 http:// 或 https:// QCOW2 镜像地址。';
 
     const version = currentVersion();
     const versionText = system.requiresImage ? '自定义镜像' : (system.rolling ? 'Rolling' : version.label);
-    els.summarySystem.textContent = `${system.name} ${versionText}`;
-    els.summaryPort.textContent = port.ok ? els.sshPort.value.trim() : '—';
-    els.summaryRegion.textContent = state.region === 'china' ? '中国大陆' : '海外';
-
-    const masked = !state.passwordVisible;
-    const preview = buildCommand(masked);
-    els.commandPreview.textContent = preview || '请完成有效配置后生成命令。';
-    els.copyCommand.disabled = !valid;
-    els.terminalCopy.disabled = !valid;
-    els.readyBadge.classList.toggle('invalid', !valid);
-    els.readyBadge.innerHTML = `<span></span> ${valid ? '命令就绪' : '请检查配置'}`;
+    $('summarySystem').textContent = `${system.name} ${versionText}`;
+    $('summaryPort').textContent = port.ok ? $('sshPort').value.trim() : '—';
+    $('summaryRegion').textContent = state.region === 'china' ? '中国大陆' : '海外';
+    $('commandPreview').textContent = buildCommand(!state.passwordVisible) || '请完成有效配置后生成命令。';
+    $('copyCommand').disabled = !valid;
+    $('terminalCopy').disabled = !valid;
+    $('readyBadge').classList.toggle('invalid', !valid);
+    $('readyBadge').innerHTML = `<span></span> ${valid ? '命令就绪' : '请检查配置'}`;
     renderRequirements();
     renderStrength();
   }
 
   function setPasswordMode(mode) {
     state.passwordMode = mode;
-    document.querySelectorAll('[data-password-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.passwordMode === mode));
-    els.randomTools.classList.toggle('hidden', mode !== 'random');
+    document.querySelectorAll('[data-password-mode]').forEach(button => button.classList.toggle('active', button.dataset.passwordMode === mode));
+    $('randomTools').classList.toggle('hidden', mode !== 'random');
     if (mode === 'random') generatePassword();
-    else {
-      els.passwordInput.value = '';
-      els.passwordInput.focus();
-      validateAndRender();
-    }
+    else { $('passwordInput').value = ''; $('passwordInput').focus(); validateAndRender(); }
   }
-
   function setRegion(region) {
     state.region = region;
-    document.querySelectorAll('[data-region]').forEach(btn => btn.classList.toggle('active', btn.dataset.region === region));
+    document.querySelectorAll('[data-region]').forEach(button => button.classList.toggle('active', button.dataset.region === region));
     savePreference('lr-region', region);
     validateAndRender();
   }
-
   function setVisibility(visible) {
     state.passwordVisible = visible;
-    els.passwordInput.type = visible ? 'text' : 'password';
-    els.visibilityToggle.classList.toggle('password-visible', visible);
-    els.visibilityToggle.setAttribute('aria-label', visible ? '隐藏密码' : '显示密码');
+    $('passwordInput').type = visible ? 'text' : 'password';
+    $('visibilityToggle').classList.toggle('password-visible', visible);
+    $('visibilityToggle').setAttribute('aria-label', visible ? '隐藏密码' : '显示密码');
     validateAndRender();
   }
 
+  function showToast(message) {
+    clearTimeout(toastTimer);
+    $('toastText').textContent = message;
+    $('toast').classList.add('show');
+    toastTimer = setTimeout(() => $('toast').classList.remove('show'), 1800);
+  }
   async function copyText(text, successMessage) {
     try {
       if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
       else {
         const area = document.createElement('textarea');
-        area.value = text; area.setAttribute('readonly', ''); area.style.position = 'fixed'; area.style.opacity = '0';
-        document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove();
+        area.value = text;
+        area.readOnly = true;
+        area.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
       }
       showToast(successMessage);
-      return true;
-    } catch (_) {
-      showToast('复制失败，请手动复制');
-      return false;
-    }
-  }
-
-  let toastTimer;
-  function showToast(message) {
-    clearTimeout(toastTimer);
-    els.toastText.textContent = message;
-    els.toast.classList.add('show');
-    toastTimer = setTimeout(() => els.toast.classList.remove('show'), 1800);
-  }
-
-  function copyCommand() {
-    const command = buildCommand(false);
-    if (command) copyText(command, '完整重装命令已复制');
-  }
-
-  function toggleTheme() {
-    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
-    savePreference('lr-theme', next);
+    } catch (_) { showToast('复制失败，请手动复制'); }
   }
 
   function bindEvents() {
-    els.distroButton.addEventListener('click', () => els.distroSelect.classList.contains('open') ? closeDistroMenu() : openDistroMenu());
-    els.distroSearch.addEventListener('input', e => renderDistroOptions(e.target.value));
-    document.addEventListener('click', e => { if (!els.distroSelect.contains(e.target)) closeDistroMenu(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDistroMenu(); });
+    $('distroButton').addEventListener('click', event => {
+      event.stopPropagation();
+      $('distroSelect').classList.contains('open') ? closeDistroMenu() : openDistroMenu();
+    });
+    $('distroMenu').addEventListener('click', event => event.stopPropagation());
+    $('distroSearch').addEventListener('input', event => renderDistroOptions(event.target.value));
+    document.addEventListener('click', closeDistroMenu);
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeDistroMenu(); });
 
-    els.versionSelect.addEventListener('change', () => {
-      state.version = els.versionSelect.value;
+    $('versionSelect').addEventListener('change', () => {
+      state.version = $('versionSelect').value;
       savePreference('lr-version', state.version);
       validateAndRender();
     });
-    els.imageUrl.addEventListener('input', validateAndRender);
-
-    document.querySelectorAll('[data-password-mode]').forEach(btn => btn.addEventListener('click', () => setPasswordMode(btn.dataset.passwordMode)));
-    document.querySelectorAll('[data-region]').forEach(btn => btn.addEventListener('click', () => setRegion(btn.dataset.region)));
-
-    els.passwordInput.addEventListener('input', validateAndRender);
-    els.passwordInput.addEventListener('paste', () => setTimeout(validateAndRender, 0));
-    els.passwordLength.addEventListener('change', () => {
-      savePreference('lr-password-length', els.passwordLength.value);
+    $('imageUrl').addEventListener('input', validateAndRender);
+    document.querySelectorAll('[data-password-mode]').forEach(button => button.addEventListener('click', () => setPasswordMode(button.dataset.passwordMode)));
+    document.querySelectorAll('[data-region]').forEach(button => button.addEventListener('click', () => setRegion(button.dataset.region)));
+    $('passwordInput').addEventListener('input', validateAndRender);
+    $('passwordInput').addEventListener('paste', () => setTimeout(validateAndRender, 0));
+    $('passwordLength').addEventListener('change', () => {
+      savePreference('lr-password-length', $('passwordLength').value);
       if (state.passwordMode === 'random') generatePassword();
     });
-    els.regeneratePassword.addEventListener('click', generatePassword);
-    els.visibilityToggle.addEventListener('click', () => setVisibility(!state.passwordVisible));
-    els.copyPassword.addEventListener('click', () => {
-      if (validatePassword().ok) copyText(els.passwordInput.value, '密码已复制');
-      else showToast('请先输入或生成密码');
+    $('regeneratePassword').addEventListener('click', generatePassword);
+    $('visibilityToggle').addEventListener('click', () => setVisibility(!state.passwordVisible));
+    $('copyPassword').addEventListener('click', () => validatePassword().ok ? copyText($('passwordInput').value, '密码已复制') : showToast('请先输入或生成密码'));
+    $('sshPort').addEventListener('input', () => { savePreference('lr-port', $('sshPort').value); validateAndRender(); });
+    $('sshPort').addEventListener('blur', () => { if (!$('sshPort').value.trim()) $('sshPort').value = '22'; validateAndRender(); });
+    $('copyCommand').addEventListener('click', () => { const command = buildCommand(false); if (command) copyText(command, '完整重装命令已复制'); });
+    $('terminalCopy').addEventListener('click', () => { const command = buildCommand(false); if (command) copyText(command, '完整重装命令已复制'); });
+    $('copyReset').addEventListener('click', () => copyText('bash reinstall.sh reset', '取消命令已复制'));
+    $('themeToggle').addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      savePreference('lr-theme', next);
     });
-
-    els.sshPort.addEventListener('input', () => {
-      savePreference('lr-port', els.sshPort.value);
-      validateAndRender();
-    });
-    els.sshPort.addEventListener('blur', () => {
-      if (!els.sshPort.value.trim()) els.sshPort.value = '22';
-      validateAndRender();
-    });
-
-    els.copyCommand.addEventListener('click', copyCommand);
-    els.terminalCopy.addEventListener('click', copyCommand);
-    els.copyReset.addEventListener('click', () => copyText('bash reinstall.sh reset', '取消命令已复制'));
-    els.themeToggle.addEventListener('click', toggleTheme);
   }
 
   function init() {
@@ -470,5 +393,6 @@
     generatePassword();
   }
 
-  init();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 })();
