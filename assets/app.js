@@ -88,6 +88,16 @@
     china: 'https://cnb.cool/bin456789/reinstall/-/git/raw/main/reinstall.sh'
   };
 
+  const BOOTSTRAP_LINES = [
+    'if command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get install -y curl wget ca-certificates',
+    'elif command -v dnf >/dev/null 2>&1; then dnf install -y curl wget ca-certificates',
+    'elif command -v yum >/dev/null 2>&1; then yum install -y curl wget ca-certificates',
+    'elif command -v apk >/dev/null 2>&1; then apk add --no-cache curl wget ca-certificates',
+    'elif command -v pacman >/dev/null 2>&1; then pacman -Sy --noconfirm curl wget ca-certificates',
+    'elif command -v zypper >/dev/null 2>&1; then zypper --non-interactive install curl wget ca-certificates',
+    'fi'
+  ];
+
   const state = { distro: 'debian', version: '13', passwordMode: 'random', passwordVisible: false, region: 'overseas', isoMode: 'auto' };
   const $ = id => document.getElementById(id);
   let requirementsCard = null;
@@ -262,7 +272,11 @@
 
     const slash = '\\';
     const downloadUrl = DOWNLOAD_URLS[state.region];
-    const lines = [`(curl -O ${downloadUrl} || wget -O reinstall.sh ${downloadUrl}) && ${slash}`];
+    const lines = [
+      ...BOOTSTRAP_LINES,
+      '',
+      `(curl -fL -o reinstall.sh ${downloadUrl} || wget -O reinstall.sh ${downloadUrl}) && ${slash}`
+    ];
     const target = args.shift();
     if (args.length) {
       lines.push(`  bash reinstall.sh ${target} ${slash}`);
