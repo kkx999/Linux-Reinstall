@@ -48,6 +48,21 @@
   gap: 26px;
 }
 
+/* Keep native select popups consistent with the active theme on Windows browsers. */
+.select-native-wrap select,
+.length-control select {
+  color-scheme: dark;
+}
+[data-theme="light"] .select-native-wrap select,
+[data-theme="light"] .length-control select {
+  color-scheme: light;
+}
+.select-native-wrap option,
+.length-control option {
+  background: var(--panel-solid);
+  color: var(--text);
+}
+
 /* Keep the password utility row on one clean visual baseline. */
 .password-tools {
   min-height: 32px;
