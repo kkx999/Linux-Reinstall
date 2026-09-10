@@ -86,6 +86,55 @@ select {
   color: var(--text);
 }
 
+/* Slide the selected surface between the two primary segmented controls. */
+@supports selector(.segmented:has(.segment)) {
+  .segmented:has(> [data-password-mode]),
+  .region-segmented {
+    position: relative;
+    isolation: isolate;
+  }
+  .segmented:has(> [data-password-mode])::before,
+  .region-segmented::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc((100% - 12px) / 2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel-solid);
+    box-shadow: 0 2px 8px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.025);
+    pointer-events: none;
+    z-index: 0;
+    transform: translateX(0);
+    transition: transform .22s cubic-bezier(.22,.61,.36,1);
+  }
+  .segmented:has(> [data-password-mode="custom"].active)::before,
+  .region-segmented:has(> [data-region="china"].active)::before {
+    transform: translateX(calc(100% + 4px));
+  }
+  .segmented:has(> [data-password-mode]) .segment,
+  .region-segmented .segment {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    box-shadow: none;
+  }
+  .segmented:has(> [data-password-mode]) .segment.active,
+  .region-segmented .segment.active {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segmented:has(> [data-password-mode])::before,
+  .region-segmented::before {
+    transition: none;
+  }
+}
+
 /* Keep the password utility row on one clean visual baseline. */
 .password-tools {
   min-height: 32px;
