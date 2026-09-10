@@ -42,17 +42,11 @@
 }
 .hero-cta:hover svg { transform: translateY(2px); }
 
-/* Give the two primary cards more breathing room while keeping their bottoms aligned. */
+/* Keep the main cards independent instead of forcing equal height. */
 .tool-grid {
-  align-items: stretch;
+  align-items: start;
   gap: 26px;
 }
-.tool-grid > .panel { height: 100%; }
-.config-panel {
-  display: flex;
-  flex-direction: column;
-}
-.config-panel .form-stack { flex: 0 0 auto; }
 
 /* Keep the password utility row on one clean visual baseline. */
 .password-tools {
@@ -67,17 +61,13 @@
   align-items: center;
   line-height: 1;
 }
-.password-tools .text-button {
-  padding: 0 2px;
-}
+.password-tools .text-button { padding: 0 2px; }
 .password-tools .text-button svg {
   width: 15px;
   height: 15px;
   flex: 0 0 15px;
 }
-.password-tools .length-control {
-  gap: 8px;
-}
+.password-tools .length-control { gap: 8px; }
 .password-tools .length-control select {
   height: 32px;
   min-width: 52px;
@@ -93,26 +83,12 @@
 .windows-options.hidden { display: none; }
 .windows-row { margin: 0; }
 .windows-iso-group { min-width: 0; }
-.windows-iso-segmented {
-  margin-bottom: 0;
-}
-.windows-custom-iso {
-  margin-top: 10px;
-}
+.windows-iso-segmented { margin-bottom: 0; }
+.windows-custom-iso { margin-top: 10px; }
 .windows-custom-iso.hidden,
 .windows-auto-hint.hidden { display: none; }
-.windows-auto-hint {
-  margin-top: 8px;
-}
-.windows-iso-group .field-hint {
-  line-height: 1.6;
-}
-
-/* Old pseudo-element reminder is retired in favor of a real dynamic requirements card. */
-.config-panel::after {
-  content: none;
-  display: none;
-}
+.windows-auto-hint { margin-top: 8px; }
+.windows-iso-group .field-hint { line-height: 1.6; }
 
 .requirements-card {
   margin-top: 26px;
@@ -155,9 +131,7 @@
   background: color-mix(in srgb, var(--input) 82%, transparent);
 }
 .requirements-grid span,
-.requirements-grid strong {
-  display: block;
-}
+.requirements-grid strong { display: block; }
 .requirements-grid span {
   margin-bottom: 4px;
   color: var(--subtle);
@@ -176,22 +150,18 @@
   line-height: 1.55;
 }
 
-/* Keep the status text compact after switching to Chinese labels. */
 .local-badge,
 .ready-badge {
   white-space: nowrap;
   letter-spacing: .06em;
 }
 
-/* Reduce the visual weight of the strength meter slightly. */
 .strength-bars { opacity: .72; }
 
-/* The recovery card is actionable, so keep it clearly readable. */
 .cancel-box { border-color: var(--line-strong); }
 .cancel-box strong { color: var(--text); }
 .cancel-box > div > span { color: var(--muted); }
 
-/* Separate the secondary information cards from the generator. */
 .info-strip {
   gap: 18px;
   margin-top: 30px;
@@ -206,31 +176,16 @@
   min-width: 0;
   padding-top: 1px;
 }
-
-/* style.css has a broad `.info-strip span` rule; keep icon wrappers isolated from it. */
 .info-strip .info-icon {
   width: 34px;
   height: 34px;
   min-width: 34px;
   flex: 0 0 34px;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  place-items: center;
   align-self: flex-start;
-  border-radius: 9px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 0;
-  line-height: 1;
 }
 .info-strip .info-icon svg {
   width: 16px;
   height: 16px;
-  display: block;
-  margin: 0;
-  flex: none;
-  transform: none;
 }
 .info-strip strong {
   line-height: 1.35;
@@ -238,10 +193,7 @@
 }
 
 @media (max-width: 900px) {
-  .tool-grid {
-    gap: 20px;
-  }
-  .tool-grid > .panel { height: auto; }
+  .tool-grid { gap: 20px; }
   .requirements-card { margin-top: 24px; }
   .info-strip {
     gap: 14px;
@@ -257,15 +209,9 @@
     margin-top: 10px;
   }
   .password-tools .text-button,
-  .password-tools .length-control {
-    min-height: 30px;
-  }
-  .password-tools .length-control select {
-    height: 30px;
-  }
-  .windows-options {
-    gap: 16px;
-  }
+  .password-tools .length-control { min-height: 30px; }
+  .password-tools .length-control select { height: 30px; }
+  .windows-options { gap: 16px; }
   .windows-row {
     grid-template-columns: 1fr;
     gap: 14px;
