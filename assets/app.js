@@ -12,7 +12,6 @@
       { value: 'win11-ltsc-2024', label: 'Windows 11 Enterprise LTSC 2024', imageName: 'Windows 11 Enterprise LTSC 2024', ram: '1 GB', disk: '25 GB', tag: '推荐', note: '上游会自动绕过 Windows 11 硬件限制，并按需注入云厂商驱动。' },
       { value: 'win11-pro', label: 'Windows 11 Pro', imageName: 'Windows 11 Pro', ram: '1 GB', disk: '25 GB' },
       { value: 'win11-enterprise', label: 'Windows 11 Enterprise', imageName: 'Windows 11 Enterprise', ram: '1 GB', disk: '25 GB' },
-      { value: 'win11-home', label: 'Windows 11 Home', imageName: 'Windows 11 Home', ram: '1 GB', disk: '25 GB' },
       { value: 'win10-ltsc-2021', label: 'Windows 10 Enterprise LTSC 2021', imageName: 'Windows 10 Enterprise LTSC 2021', ram: '1 GB', disk: '25 GB', tag: 'LTSC' },
       { value: 'win10-pro', label: 'Windows 10 Pro', imageName: 'Windows 10 Pro', ram: '1 GB', disk: '25 GB' },
       { value: 'win10-enterprise', label: 'Windows 10 Enterprise', imageName: 'Windows 10 Enterprise', ram: '1 GB', disk: '25 GB' },
@@ -89,12 +88,14 @@
   };
 
   const BOOTSTRAP_LINES = [
-    'if command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get install -y curl wget ca-certificates',
-    'elif command -v dnf >/dev/null 2>&1; then dnf install -y curl wget ca-certificates',
-    'elif command -v yum >/dev/null 2>&1; then yum install -y curl wget ca-certificates',
-    'elif command -v apk >/dev/null 2>&1; then apk add --no-cache curl wget ca-certificates',
-    'elif command -v pacman >/dev/null 2>&1; then pacman -Sy --noconfirm curl wget ca-certificates',
-    'elif command -v zypper >/dev/null 2>&1; then zypper --non-interactive install curl wget ca-certificates',
+    'if ! command -v curl >/dev/null 2>&1 && ! command -v wget >/dev/null 2>&1; then',
+    '  if command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get install -y curl wget ca-certificates',
+    '  elif command -v dnf >/dev/null 2>&1; then dnf install -y curl wget ca-certificates',
+    '  elif command -v yum >/dev/null 2>&1; then yum install -y curl wget ca-certificates',
+    '  elif command -v apk >/dev/null 2>&1; then apk add --no-cache curl wget ca-certificates',
+    '  elif command -v pacman >/dev/null 2>&1; then pacman -Sy --noconfirm curl wget ca-certificates',
+    '  elif command -v zypper >/dev/null 2>&1; then zypper --non-interactive install curl wget ca-certificates',
+    '  fi',
     'fi'
   ];
 
