@@ -296,9 +296,9 @@ input::placeholder { color: color-mix(in srgb, var(--muted) 68%, transparent); }
 .info-strip > div { padding: 16px; display: flex; gap: 11px; border-radius: 16px; background: color-mix(in srgb, var(--panel) 68%, transparent); border: 1px solid var(--line); }
 .info-icon { width: 31px; height: 31px; border-radius: 9px; flex: 0 0 auto; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
 .info-icon svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.info-strip strong, .info-strip span { display: block; }
+.info-strip strong, .info-strip > div > div > span { display: block; }
 .info-strip strong { font-size: 10px; margin-bottom: 4px; }
-.info-strip span { color: var(--subtle); font-size: 9px; line-height: 1.55; }
+.info-strip > div > div > span { color: var(--subtle); font-size: 9px; line-height: 1.55; }
 .info-strip a { color: var(--accent); }
 .site-footer { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 24px 0 36px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 18px; color: var(--subtle); font-size: 9px; }
 .site-footer > div { display: flex; align-items: center; gap: 9px; }
