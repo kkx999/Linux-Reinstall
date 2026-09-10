@@ -42,10 +42,33 @@
 }
 .hero-cta:hover svg { transform: translateY(2px); }
 
-/* Keep the main cards independent instead of forcing equal height. */
+/* Normalize native control metrics across Windows and macOS browsers. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+button,
+input,
+select {
+  margin: 0;
+  line-height: 1.2;
+}
+.text-input,
+.password-input-wrap,
+.select-trigger,
+.select-native-wrap select {
+  height: 49px;
+  min-height: 49px;
+}
+
+/* Desktop cards align exactly; stacked layouts keep natural height. */
 .tool-grid {
-  align-items: start;
+  align-items: stretch;
   gap: 26px;
+}
+.config-panel,
+.output-panel {
+  height: 100%;
 }
 
 /* Keep native select popups consistent with the active theme on Windows browsers. */
@@ -248,7 +271,12 @@
 }
 
 @media (max-width: 900px) {
-  .tool-grid { gap: 20px; }
+  .tool-grid {
+    align-items: start;
+    gap: 20px;
+  }
+  .config-panel,
+  .output-panel { height: auto; }
   .requirements-card { margin-top: 24px; }
   .info-strip {
     gap: 14px;
