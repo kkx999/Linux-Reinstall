@@ -105,6 +105,9 @@ select {
   gap: 7px;
 }
 .password-tools .text-button svg { display: none; }
+#regeneratePassword {
+  transition: color .16s ease, opacity .16s ease, transform .12s ease;
+}
 #regeneratePassword::before {
   content: "";
   width: 16px;
@@ -113,7 +116,15 @@ select {
   background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 12a9 9 0 0 0-15-6.7L3 8M3 3v5h5M3 12a9 9 0 0 0 15 6.7L21 16M16 16h5v5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 12a9 9 0 0 0-15-6.7L3 8M3 3v5h5M3 12a9 9 0 0 0 15 6.7L21 16M16 16h5v5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+  transition: transform .34s cubic-bezier(.2,.75,.25,1);
+  transform-origin: 50% 50%;
 }
+#regeneratePassword:hover { color: color-mix(in srgb, var(--accent) 82%, white); }
+#regeneratePassword:active {
+  transform: scale(.96);
+  opacity: .78;
+}
+#regeneratePassword:active::before { transform: rotate(210deg); }
 .password-tools .length-control { gap: 8px; }
 .password-tools .length-control select {
   height: 32px;
