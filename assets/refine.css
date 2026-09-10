@@ -177,6 +177,46 @@
 .cancel-box strong { color: var(--text); }
 .cancel-box > div > span { color: var(--muted); }
 
+.dependency-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--input) 76%, transparent);
+  color: var(--muted);
+}
+.dependency-note > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dependency-note strong,
+.dependency-note span { display: block; }
+.dependency-note strong {
+  margin-bottom: 3px;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 700;
+}
+.dependency-note span {
+  font-size: 9px;
+  line-height: 1.55;
+}
+.dependency-note code {
+  color: var(--accent);
+  font: inherit;
+  font-family: var(--mono);
+}
+
 .info-strip {
   gap: 18px;
   margin-top: 30px;
@@ -236,6 +276,7 @@
     padding: 13px 14px;
   }
   .requirements-grid strong { font-size: 12px; }
+  .dependency-note { padding: 11px 12px; }
   .info-strip > div {
     min-height: 0;
     padding: 16px;
