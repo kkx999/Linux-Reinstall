@@ -87,7 +87,7 @@
     china: 'https://cnb.cool/bin456789/reinstall/-/git/raw/main/reinstall.sh'
   };
 
-  const state = { distro: 'debian', version: '13', passwordMode: 'random', passwordVisible: false, region: 'overseas', isoMode: 'auto', autoReboot: false };
+  const state = { distro: 'debian', version: '13', passwordMode: 'random', passwordVisible: false, region: 'overseas', isoMode: 'auto' };
   const $ = id => document.getElementById(id);
   let requirementsCard = null;
   let toastTimer = null;
@@ -268,10 +268,6 @@
       args.forEach((arg, index) => lines.push(`    ${arg}${index < args.length - 1 ? ` ${slash}` : ''}`));
     } else {
       lines.push(`  bash reinstall.sh ${target}`);
-    }
-    if (state.autoReboot) {
-      lines[lines.length - 1] += ` && ${slash}`;
-      lines.push('  reboot');
     }
     return lines.join('\n');
   }
@@ -459,11 +455,6 @@
     renderWindowsOptions();
     validateAndRender();
   }
-  function setAutoReboot(enabled) {
-    state.autoReboot = enabled;
-    document.querySelectorAll('[data-auto-reboot]').forEach(button => button.classList.toggle('active', button.dataset.autoReboot === (enabled ? 'on' : 'off')));
-    validateAndRender();
-  }
   function setVisibility(visible) {
     state.passwordVisible = visible;
     $('passwordInput').type = visible ? 'text' : 'password';
@@ -514,7 +505,6 @@
     $('imageUrl').addEventListener('input', validateAndRender);
     document.querySelectorAll('[data-password-mode]').forEach(button => button.addEventListener('click', () => setPasswordMode(button.dataset.passwordMode)));
     document.querySelectorAll('[data-region]').forEach(button => button.addEventListener('click', () => setRegion(button.dataset.region)));
-    document.querySelectorAll('[data-auto-reboot]').forEach(button => button.addEventListener('click', () => setAutoReboot(button.dataset.autoReboot === 'on')));
     document.querySelectorAll('[data-iso-mode]').forEach(button => button.addEventListener('click', () => setIsoMode(button.dataset.isoMode)));
     $('windowsLang').addEventListener('change', () => { savePreference('lr-win-lang', $('windowsLang').value); validateAndRender(); });
     $('rdpPort').addEventListener('input', () => { savePreference('lr-win-rdp', $('rdpPort').value); validateAndRender(); });
